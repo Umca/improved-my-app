@@ -6,6 +6,7 @@ import Truck from '../cars/Truck';
 import CarFactory from '../../models/CarFactory';
 
 class Parking extends React.Component{
+
     constructor(){
         super();
         this.state = {
@@ -13,9 +14,11 @@ class Parking extends React.Component{
             cars:[],
             disabled: 5,
             truck: 15,
-            sedan:10
+            sedan: 10
         }
+        this.id = 0;
     }
+
 
     getNumOfFreeSlots(){
         return this.state.slots - this.state.cars.length;
@@ -84,6 +87,7 @@ class Parking extends React.Component{
 
     }
     addCar(type){
+
         let cars = this.state.cars;
 
         if(cars.length === this.state.slots){
@@ -92,10 +96,19 @@ class Parking extends React.Component{
 
         const factory = new CarFactory();
         let car = factory.createCar(type);
+        this.id +=1;
+        car.id = this.id;
         cars.push(car);
+
         //this.setState({cars});
         this.decreaseNumOfFreeSlots(type);
 
+    }
+
+    leaveCar(id){
+        for (let i = 0 ; i < this.state.cars.length; i++){
+            console.log(this.state.cars[i].id)
+        }
     }
     render(){
         {this.addCar(CarTypes.SEDAN)}
@@ -105,6 +118,7 @@ class Parking extends React.Component{
         {this.addCar(CarTypes.DISABLED)}
         {this.addCar(CarTypes.DISABLED)}
         {this.addCar(CarTypes.DISABLED)}
+        {this.leaveCar(3)}
         {console.log(2, this.state)}
 
         return null;
