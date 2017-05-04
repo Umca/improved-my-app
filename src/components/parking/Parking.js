@@ -52,16 +52,19 @@ class Parking extends React.Component{
         return status;
     }
 
-    decreaseNumOfFreeSlots(type){
+    decreaseNumOfFreeSlots(type, car){
         let state = this.state;
         if(type === CarTypes.DISABLED){
             if(state.disabled !== 0){
                 state.disabled -=1;
+                car.slot = CarTypes.DISABLED;
             } else {
                 if(state.sedan !== 0){
                     state.sedan -=1;
+                    car.slot = CarTypes.SEDAN;
                 } else if(state.truck !== 0){
                     state.truck -=1;
+                    car.slot = CarTypes.TRUCK;
                 } else {
                     console.log("No free slots");
                 }
@@ -69,21 +72,24 @@ class Parking extends React.Component{
         } else if (type === CarTypes.TRUCK){
             if(state.truck !== 0 ){
                 state.truck -=1;
+                car.slot = CarTypes.TRUCK;
             } else {
                 console.log("No free slots");
             }
         } else if(type === CarTypes.SEDAN){
             if(state.sedan !== 0){
                 state.sedan -=1;
+                car.slot = CarTypes.SEDAN;
             } else {
                 if(state.truck !== 0 ){
                     state.truck -=1;
+                    car.slot = CarTypes.TRUCK;
                 } else {
                     console.log("No free slots");
                 }
             }
         }
-       // this.setState({state});
+       this.setState({state});
 
     }
     addCar(type){
@@ -100,26 +106,26 @@ class Parking extends React.Component{
         car.id = this.id;
         cars.push(car);
 
-        //this.setState({cars});
-        this.decreaseNumOfFreeSlots(type);
+        this.setState({cars});
+        this.decreaseNumOfFreeSlots(type, car);
 
     }
 
     leaveCar(id){
-        for (let i = 0 ; i < this.state.cars.length; i++){
-            console.log(this.state.cars[i].id)
+        let state = this.state;
+        for (let i = 0 ; i < state.cars.length; i++){
+            if(state.cars[i].id  === id){
+                state.cars.splice(i, 1);
+                let type = state.cars[i].slot.toLowerCase();
+                this.state[type] +=1;
+
+            }
         }
+
+        this.setState({state})
+
     }
     render(){
-        {this.addCar(CarTypes.SEDAN)}
-        {this.addCar(CarTypes.DISABLED)}
-        {this.addCar(CarTypes.DISABLED)}
-        {this.addCar(CarTypes.DISABLED)}
-        {this.addCar(CarTypes.DISABLED)}
-        {this.addCar(CarTypes.DISABLED)}
-        {this.addCar(CarTypes.DISABLED)}
-        {this.leaveCar(3)}
-        {console.log(2, this.state)}
 
         return null;
     }

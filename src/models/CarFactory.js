@@ -7,7 +7,6 @@ class Factory {
     createCar(type){
         let car;
 
-
         if(type === CarTypes.SEDAN){
             car = new Sedan();
         } else if (type === CarTypes.TRUCK){
@@ -15,7 +14,6 @@ class Factory {
         } else if(type === CarTypes.DISABLED){
             car = new Disabled();
         }
-
 
         return car;
     }
