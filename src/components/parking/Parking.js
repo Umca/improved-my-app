@@ -48,26 +48,66 @@ class Parking extends React.Component{
 
         return status;
     }
+
+    decreaseNumOfFreeSlots(type){
+        let state = this.state;
+        if(type === CarTypes.DISABLED){
+            if(state.disabled !== 0){
+                state.disabled -=1;
+            } else {
+                if(state.sedan !== 0){
+                    state.sedan -=1;
+                } else if(state.truck !== 0){
+                    state.truck -=1;
+                } else {
+                    console.log("No free slots");
+                }
+            }
+        } else if (type === CarTypes.TRUCK){
+            if(state.truck !== 0 ){
+                state.truck -=1;
+            } else {
+                console.log("No free slots");
+            }
+        } else if(type === CarTypes.SEDAN){
+            if(state.sedan !== 0){
+                state.sedan -=1;
+            } else {
+                if(state.truck !== 0 ){
+                    state.truck -=1;
+                } else {
+                    console.log("No free slots");
+                }
+            }
+        }
+       // this.setState({state});
+
+    }
     addCar(type){
         let cars = this.state.cars;
+
+        if(cars.length === this.state.slots){
+            console.log('This parking is full! :(');
+        }
 
         const factory = new CarFactory();
         let car = factory.createCar(type);
         cars.push(car);
         //this.setState({cars});
-        console.log(cars);
+        this.decreaseNumOfFreeSlots(type);
 
     }
     render(){
         {this.addCar(CarTypes.SEDAN)}
-        {this.addCar(CarTypes.SEDAN)}
-        {this.addCar(CarTypes.SEDAN)}
-        {console.log(this.getParkingState())}
-        return(
-            <div className="parking">
+        {this.addCar(CarTypes.DISABLED)}
+        {this.addCar(CarTypes.DISABLED)}
+        {this.addCar(CarTypes.DISABLED)}
+        {this.addCar(CarTypes.DISABLED)}
+        {this.addCar(CarTypes.DISABLED)}
+        {this.addCar(CarTypes.DISABLED)}
+        {console.log(2, this.state)}
 
-            </div>
-        )
+        return null;
     }
 };
 export default Parking;

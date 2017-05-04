@@ -15,8 +15,6 @@ class Factory {
             car = new Disabled();
         }
 
-        car.type  = type;
-
         return car;
     }
 }

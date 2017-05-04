@@ -8,7 +8,7 @@ class Car extends React.Component{
         console.log('Wrrrr!');
     }
     render(){
-        return;
+        return null;
     }
 };
 export default Car;
