@@ -1,12 +1,16 @@
 import React from 'react';
 import {CarTypes} from '../../data/CarTypes';
+import Sedan from '../cars/Sedan';
+import Disabled from '../cars/Disabled';
+import Truck from '../cars/Truck';
+import CarFactory from '../../models/CarFactory';
 
 class Parking extends React.Component{
     constructor(){
         super();
         this.state = {
             slots: 30,
-            cars:[{type: CarTypes.SEDAN}, {type: CarTypes.SEDAN}, {type: CarTypes.TRUCK}],
+            cars:[],
             disabled: 5,
             truck: 15,
             sedan:10
@@ -44,7 +48,21 @@ class Parking extends React.Component{
 
         return status;
     }
+    addCar(type){
+        let cars = this.state.cars;
+
+        const factory = new CarFactory();
+        let car = factory.createCar(type);
+        cars.push(car);
+        //this.setState({cars});
+        console.log(cars);
+
+    }
     render(){
+        {this.addCar(CarTypes.SEDAN)}
+        {this.addCar(CarTypes.SEDAN)}
+        {this.addCar(CarTypes.SEDAN)}
+        {console.log(this.getParkingState())}
         return(
             <div className="parking">
 

@@ -1,5 +1,7 @@
-import CarTypes from '../data/CarTypes';
-
+import {CarTypes} from '../data/CarTypes';
+import Sedan from '../components/cars/Sedan';
+import Truck from '../components/cars/Truck';
+import Disabled from '../components/cars/Disabled';
 
 class Factory {
     createCar(type){
