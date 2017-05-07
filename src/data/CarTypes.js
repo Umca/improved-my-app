@@ -1,5 +1,5 @@
 export const CarTypes = {
-    SEDAN: 'Sedan',
-    TRUCK: 'Truck',
-    DISABLED: 'Disabled'
+    SEDAN: 'sedan',
+    TRUCK: 'truck',
+    DISABLED: 'disabled'
 };

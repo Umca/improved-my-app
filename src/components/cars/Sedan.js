@@ -5,6 +5,7 @@ class Sedan extends Car{
     constructor(){
         super();
         this.type = CarTypes.SEDAN;
+        this.posSlot = [CarTypes.SEDAN, CarTypes.TRUCK]
     }
 };
 

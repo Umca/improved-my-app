@@ -1,0 +1,79 @@
+body {
+  margin: 0;
+  padding: 0;
+  font-family: sans-serif;
+}
+.wrapper{
+  display: grid;
+  grid-gap: 10px;
+  grid-template-columns: repeat(6, 1fr);
+}
+.margin-bottom{
+  margin-bottom: 10px;
+}
+.custom-width{
+  width: 100%;
+}
+.occupied{
+  background-image: url('./images/cross.png');
+  background-repeat: no-repeat;
+  background-position: 50% 50%;
+  background-size: 70%;
+}
+.slot-id{
+  display: block;
+  position: absolute;
+  background-color: white;
+  color: #2e2e2e;
+  height: 15px;
+  width: 15px;
+  border-radius: 50%;
+  font-size: 10px;
+  text-align:center;
+  bottom: 3px;
+  right: 3px;
+}
+.slot{
+  border: 1px solid lightgray;
+  height: 100px;
+  position: relative;
+}
+.slot:hover{
+  cursor:pointer;
+}
+.disabled{
+  background-color: #F58989;
+}
+.truck{
+  background-color: #89F589;
+}
+.sedan{
+  background-color: #F5F589;
+}
+.details{
+  font-size: 12px;
+}
+.radio-disabled{
+  color: #F58989;
+  font-weight: bold;
+  -webkit-text-stroke: 1px dimgrey;
+  margin-left: 7px;
+}
+.radio-truck{
+ color:  #89F589;
+  font-weight: bold;
+  -webkit-text-stroke: 1px dimgrey;
+  margin-left: 7px
+
+}
+.radio-sedan{
+  color: #F5F589;
+  font-weight: bold;
+  -webkit-text-stroke: 1px dimgrey;
+  margin-left: 7px
+
+}
+.statistics p{
+  margin-bottom: 5px;
+}
+

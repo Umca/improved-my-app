@@ -1,18 +1,18 @@
 import React, { Component } from 'react';
 import Parking from './components/parking/Parking';
-import {CarTypes} from './data/CarTypes';
+
 class App extends Component {
 
-    componentDidMount() {
-       this._child.addCar(CarTypes.SEDAN);
-        this._child.addCar(CarTypes.SEDAN);
-        this._child.addCar(CarTypes.TRUCK);
-        this._child.addCar(CarTypes.DISABLED);
-        this._child.addCar(CarTypes.DISABLED);
-        this._child.leaveCar(4);
-        console.log(this._child.getParkingState());
-        console.log(this._child.state);
-    }
+    //componentDidMount() {
+    //   this._child.addCar(CarTypes.SEDAN);
+    //    this._child.addCar(CarTypes.SEDAN);
+    //    this._child.addCar(CarTypes.TRUCK);
+    //    this._child.addCar(CarTypes.DISABLED);
+    //    this._child.addCar(CarTypes.DISABLED);
+    //    this._child.leaveCar(4);
+    //    console.log(this._child.getParkingState());
+    //    console.log(this._child.state);
+    //}
 
     render() {
         return (

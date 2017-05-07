@@ -1,133 +1,175 @@
 import React from 'react';
-import {CarTypes} from '../../data/CarTypes';
-import Sedan from '../cars/Sedan';
-import Disabled from '../cars/Disabled';
-import Truck from '../cars/Truck';
 import CarFactory from '../../models/CarFactory';
+import Slot from './Slot';
+import _ from 'lodash';
+import ControlBoard from '../controls/ControlBoard';
+import Statistics from '../controls/Statistics';
 
 class Parking extends React.Component{
 
-    constructor(){
+    constructor() {
         super();
         this.state = {
-            slots: 30,
+            slots: [],
+            isChecked:'',
             cars:[],
-            disabled: 5,
-            truck: 15,
-            sedan: 10
+            showStatistics:false
+        };
+        this.id = -1;
+        this.numOfSlots = Math.round(Math.random()*(80-20+1)+20);
+        this.generalData = [
+            {disabled: 15 * this.numOfSlots / 100},
+            {truck: 35 * this.numOfSlots / 100},
+            {sedan: 50 * this.numOfSlots / 100}
+        ]
+    }
+
+    countNumOfParticularSlots(){
+        let slots = this.state.slots;
+        let occupied = slots.filter((slot) => !slot.free);
+        let data={};
+        for(let i = 0; i < this.generalData.length; i++){
+            let arr = occupied.filter((slot)=>{
+                return slot.type === Object.keys(this.generalData[i])[0]
+            });
+            data[Object.keys(this.generalData[i])[0]+'_Occupied'] = arr.length;
+            data[Object.keys(this.generalData[i])[0]+'_Free'] = Object.values(this.generalData[i])[0] - arr.length <=0 ? 0 : Math.ceil(Object.values(this.generalData[i])[0] - arr.length);
         }
-        this.id = 0;
+        return data;
     }
-
-
-    getNumOfFreeSlots(){
-        return this.state.slots - this.state.cars.length;
+    initSlot(type){
+        return {
+            type: type,
+            free: true,
+            car: null
+        }
     }
-
-    getNumOfAllBusySlots(){
-        return this.state.cars.length;
+    fillWithSlots(type, num){
+        let slots = [];
+        for(let i = 0; i < num ; i++){
+            slots.push(this.initSlot(type));
+        }
+        return slots;
     }
+    componentWillMount(){
+        let slots = _.flatten(this.generalData.map((obj)=>{
+            return this.fillWithSlots(Object.keys(obj)[0], Object.values(obj)[0]);
 
-    getNumOfParticularCars(type){
+        }));
+
+        for (let i = 0; i < slots.length; i++){
+            slots[i].id = i;
+        }
+        this.setState({slots});
+    }
+    removeFromCars(id){
         let cars = this.state.cars.filter((car)=>{
-            return car.type === type;
+            return car.id !== +id;
+        });
+        this.setState({cars});
+
+    }
+    removeFromSlots(id){
+        let slots = this.state.slots;
+        for(let i = 0; i < slots.length; i++){
+            if(slots[i].id === +id){
+                slots[i].free = true;
+            }
+        }
+        this.setState({slots});
+    }
+    leaveParking(e){
+        let id = e.target.id;
+        this.removeFromCars(id);
+        this.removeFromSlots(id);
+    }
+    handleChange(e){
+        this.setState({
+            isChecked: e.target.value
         })
-
-        return cars.length;
-    }
-    getNumOfFreeParticularSlots(type){
-        let cars = this.getNumOfParticularCars(type);
-        return this.state[type.toLowerCase()] - cars;
     }
 
-    getParkingState(){
-        let status = {};
-        status.busyBySedan = this.getNumOfParticularCars(CarTypes.SEDAN);
-        status.busyByTruck = this.getNumOfParticularCars(CarTypes.TRUCK);
-        status.busyByDisabled = this.getNumOfParticularCars(CarTypes.DISABLED);
-        status.freeSedanSlots = this.getNumOfFreeParticularSlots(CarTypes.SEDAN);
-        status.freeTruckSlots = this.getNumOfFreeParticularSlots(CarTypes.TRUCK);
-        status.freeDisabledSlots = this.getNumOfFreeParticularSlots(CarTypes.DISABLED);
-
-        return status;
-    }
-
-    decreaseNumOfFreeSlots(type, car){
-        let state = this.state;
-        if(type === CarTypes.DISABLED){
-            if(state.disabled !== 0){
-                state.disabled -=1;
-                car.slot = CarTypes.DISABLED;
-            } else {
-                if(state.sedan !== 0){
-                    state.sedan -=1;
-                    car.slot = CarTypes.SEDAN;
-                } else if(state.truck !== 0){
-                    state.truck -=1;
-                    car.slot = CarTypes.TRUCK;
-                } else {
-                    console.log("No free slots");
-                }
-            }
-        } else if (type === CarTypes.TRUCK){
-            if(state.truck !== 0 ){
-                state.truck -=1;
-                car.slot = CarTypes.TRUCK;
-            } else {
-                console.log("No free slots");
-            }
-        } else if(type === CarTypes.SEDAN){
-            if(state.sedan !== 0){
-                state.sedan -=1;
-                car.slot = CarTypes.SEDAN;
-            } else {
-                if(state.truck !== 0 ){
-                    state.truck -=1;
-                    car.slot = CarTypes.TRUCK;
-                } else {
-                    console.log("No free slots");
-                }
-            }
-        }
-       this.setState({state});
-
-    }
-    addCar(type){
-
-        let cars = this.state.cars;
-
-        if(cars.length === this.state.slots){
-            console.log('This parking is full! :(');
-        }
-
+    createCar(type){
         const factory = new CarFactory();
         let car = factory.createCar(type);
-        this.id +=1;
+        return car;
+    }
+    addCar(type){
+        let cars = this.state.cars;
+        let car = this.createCar(type);
+        this.findFreeSlot(car);
         car.id = this.id;
         cars.push(car);
-
-        this.setState({cars});
-        this.decreaseNumOfFreeSlots(type, car);
-
     }
-
-    leaveCar(id){
-        let state = this.state;
-        for (let i = 0 ; i < state.cars.length; i++){
-            if(state.cars[i].id  === id){
-                state.cars.splice(i, 1);
-                let type = state.cars[i].slot.toLowerCase();
-                this.state[type] +=1;
+    findFreeSlot(car){
+        let freeSlots = this.state.slots.filter((slot)=>{
+            return slot.free;
+        });
+        if(freeSlots !== 0){
+            let temp = false;
+            for(let j = 0; j < car.posSlot.length; j++){
+                for(let i = 0; i < freeSlots.length; i++ ){
+                    if(freeSlots[i].type === car.posSlot[j]){
+                        freeSlots[i].free = false;
+                        freeSlots[i].car = car.type;
+                        this.id = freeSlots[i].id;
+                        temp = true;
+                        break;
+                    }
+                }
+                if(temp){
+                    break;
+                }
 
             }
+
+            this.forceUpdate();
+        } else {
+            alert('Unfortunately, our parking is full!')
         }
-
-        this.setState({state})
-
+    }
+    handleAddBtn(){
+        this.addCar(this.state.isChecked);
+    }
+    getFreeSlots(){
+        return this.state.slots.filter((slot) => slot.free).length;
+    }
+    getOccupiedSlots(){
+        return this.state.slots.filter((slot) => !slot.free).length;
+    }
+    handleStateBtn(){
+        this.setState({showStatistics : !this.state.showStatistics})
     }
     render(){
+        return(
+            <div className="container">
+                <h1 className="text-center par">PARKING</h1>
+                <div className="row">
+                    <div className="col-md-9">
+                        <div className="wrapper" onClick={this.leaveParking.bind(this)}>
+                            {this.state.slots.map((slot, index)=>{
+                                return <Slot type={slot.type} free={slot.free} id={index}
 
-        return null;
+                                />
+                            })}
+                        </div>
+                    </div>
+                    <div className="col-md-3">
+                        <ControlBoard handleChange={this.handleChange.bind(this)}
+                                      isChecked={this.state.isChecked}
+                                      handleAddBtn={this.handleAddBtn.bind(this)}
+                                      handleStateBtn={this.handleStateBtn.bind(this)}/>
+                        {this.state.showStatistics ?
+                            <Statistics data={this.countNumOfParticularSlots()} totalFree={this.getFreeSlots()} totalOccupied={this.getOccupiedSlots()}/>
+                            :
+                            null
+                        }
+
+                    </div>
+                </div>
+
+            </div>
+        );
     }
 };
 export default Parking;
